@@ -238,6 +238,7 @@ public class Map {
         map.movePlayer(2, 2);
         map.fullTurnPlayer(2);
         map.movePlayerBack(2);
+        map.fullTurnPlayer(2);
     }
 
 
