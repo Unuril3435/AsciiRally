@@ -213,7 +213,7 @@ public class Map {
     }
 
     public static void clear(){
-        System.out.println("\033[2J");
+        System.out.print("\033[H\033[2J");
     }
     public static void wait(int ms){
         try{
@@ -221,6 +221,7 @@ public class Map {
         } catch (Exception e){}
     }
     public static void print(Map map){
+	clear();
         System.out.println(map.toString());
         wait(500);
     }
