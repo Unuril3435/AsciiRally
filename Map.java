@@ -1,5 +1,6 @@
 import java.util.concurrent.TimeUnit;
 
+//There is a bug, if 2 or more players have to respawn they all end up at the spawnpoint without pushing each other
 public class Map {
     public static final String[] pointString = {">", "V", "<", "^"};
 
@@ -22,6 +23,7 @@ public class Map {
     public int getHeigth(){return this.heigth;}
     public int getWidth(){return this.width;}
 
+    //Adds a hole at the given coordinates
     public void addHole(int x, int y) throws ArrayIndexOutOfBoundsException{
         if(isFree(x, y)){
             int[][] ans = new int[this.holes.length+1][2];
@@ -34,6 +36,7 @@ public class Map {
             this.holes = ans;
         }
     }
+    //Return true if the coordinates are a hole
     public boolean isHole(int x, int y){
         for(int i = 0; i<this.holes.length; i++){
             if(this.holes[i][0]==x&&this.holes[i][1]==y ||
@@ -45,6 +48,7 @@ public class Map {
         return false;
     }
 
+    //Adds a flag at the given coordinates
     public void addFlag(int x, int y) throws ArrayIndexOutOfBoundsException{
         if(isFree(x, y)){
             int[][] ans = new int[this.flags.length+1][2];
@@ -57,6 +61,7 @@ public class Map {
             this.flags = ans;
         }
     }
+    //Checks if said coordinates are a flag and returns witch flag it is (-1 if there is no flag)
     public int isFlag(int x, int y){
         for(int i = 0; i<this.flags.length; i++){
             if(this.flags[i][0]==x&&this.flags[i][1]==y){
@@ -66,10 +71,12 @@ public class Map {
         return -1;
     }
 
+    //Checks if the coordinates are not a hole, flag or the spawnpoint
     public boolean isFree(int x, int y){
         return!(isHole(x, y)||isFlag(x, y)>=0||(x==SPAWN[0]&&y==SPAWN[1]));
     }
 
+    //Creates a player with an id at the spawnpoint
     public void addPlayer() throws ArrayIndexOutOfBoundsException{
         Player[] ans = new Player[this.players.length+1];
         for(int i = 0; i<this.players.length; i++){
@@ -81,6 +88,7 @@ public class Map {
         ans[this.players.length] = new Player(SPAWN[0],SPAWN[1]);
         this.players = ans;
     }
+    //Creates a player with an id at the given coordinates
     public void addPlayer(int x, int y) throws ArrayIndexOutOfBoundsException{
         Player[] ans = new Player[this.players.length+1];
         for(int i = 0; i<this.players.length; i++){
@@ -89,7 +97,7 @@ public class Map {
         ans[this.players.length] = new Player(x, y);
         this.players = ans;
     }
-    //Returns if is a player in general
+    //Returns whether there is a player in given coordinates
     public int isPlayer(int x, int y){
         for(int i = 0; i<this.players.length; i++){
             if(isPlayer(i, x, y)){
@@ -103,6 +111,12 @@ public class Map {
         return this.players[id].getHeigth()==x&&this.players[id].getWidth()==y;
     }
 
+    //Generates the map for printing
+    //  - green # is the spawnpoint
+    //  - green nubers are the flags
+    //  - black spaces are holes
+    //  - the different arrows are the players and the direction they are pointing
+    //  - the white # is normal terrain
     public String toString(){
         String ans = "";
 
@@ -130,11 +144,13 @@ public class Map {
         return ans;
     }
 
+    //this two methods move the player n position toward the direction it is pointing (if print == true then it prints else, it doesn't) print is true by default
     public void movePlayer(int id, int n){
         this.movePlayer(id, n, true);
     }
     public void movePlayer(int id, int n, boolean print){
         for(int i = 0; i<n;i++){
+            //generate a phantom player to check if there is a player at the front
             int tempX = this.players[id].getHeigth();
             int tempY = this.players[id].getWidth();
             int tempP = this.players[id].getPointing();
@@ -152,11 +168,12 @@ public class Map {
                     tempX-=1;
                     break;
             }
+            //push the player if there is one
             int pushPlayer = isPlayer(tempX, tempY);
             if(pushPlayer>=0){
                 int pushedP = this.players[pushPlayer].getPointing();
                 this.players[pushPlayer].setPointing(tempP);
-                this.movePlayer(pushPlayer, 1);
+                this.movePlayer(pushPlayer, 1,false);
                 this.players[pushPlayer].setPointing(pushedP);
             }
 
@@ -175,6 +192,7 @@ public class Map {
         if(print){print(this);}
         }
     }
+    //Move the player backwards (full turn, move one, full turn)
     public void movePlayerBack(int id){
         int prevX = this.players[id].getHeigth();
         int prevY = this.players[id].getWidth();
@@ -191,6 +209,7 @@ public class Map {
         print(this);
     }
 
+    //Turn the player to the Right and Left or make a full turn (if print == true it prints else, it doesn't) print is true by default
     public void turnRightPlayer(int id){
         this.turnRightPlayer(id,true);
     }
@@ -198,7 +217,6 @@ public class Map {
         this.players[id].turnRight();
         if(print){print(this);}
     }
-
     public void turnLeftPlayer(int id){
         this.turnLeftPlayer(id,true);
     }
@@ -206,12 +224,15 @@ public class Map {
         this.players[id].turnLeft();
         if(print){print(this);}
     }
-
     public void fullTurnPlayer(int id){
         this.turnRightPlayer(id);
         this.turnRightPlayer(id);
     }
 
+    //Various methods to create the illusion of movement
+    //  - clear()  => clears screen
+    //  - wait(ms) => wait x ms
+    //  - print()  => clear screen, print the current map and wait 500 ms
     public static void clear(){
         System.out.print("\033[H\033[2J");
     }
@@ -221,7 +242,7 @@ public class Map {
         } catch (Exception e){}
     }
     public static void print(Map map){
-	clear();
+	    clear();
         System.out.println(map.toString());
         wait(500);
     }
@@ -237,9 +258,9 @@ public class Map {
         map.addFlag(3,4);
         print(map);
         map.movePlayer(2, 2);
-        map.fullTurnPlayer(2);
-        map.movePlayerBack(2);
-        map.fullTurnPlayer(2);
+        map.fullTurnPlayer(0);
+        map.movePlayerBack(0);
+        map.fullTurnPlayer(0);
     }
 
 
