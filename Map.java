@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 public class Map {
     public static final String[] pointString = {">", "V", "<", "^"};
 
+    private final boolean PRINT;
     private final int[] SPAWN = {3,2};
     private final String[] COLORS = {"\u001B[31m", "\u001B[34m", "\u001B[33m", "\u001B[35m", "\u001B[36m", "\u001B[37m", "\u001B[0m"};
     private final int heigth;
@@ -18,6 +19,16 @@ public class Map {
         this.holes = new int[0][2];
         this.flags = new int[0][2];
         this.players =  new Player[0];
+        this.PRINT = true;
+    }
+
+    public Map(int h, int w, boolean p){
+        this.heigth = h;
+        this.width = w;
+        this.holes = new int[0][2];
+        this.flags = new int[0][2];
+        this.players =  new Player[0];
+        this.PRINT = p;
     }
 
     public int getHeigth(){return this.heigth;}
@@ -117,6 +128,7 @@ public class Map {
     //  - black spaces are holes
     //  - the different arrows are the players and the direction they are pointing
     //  - the white # is normal terrain
+    @Override
     public String toString(){
         String ans = "";
 
@@ -149,7 +161,7 @@ public class Map {
 
     //this two methods move the player n position toward the direction it is pointing (if print == true then it prints else, it doesn't) print is true by default
     public void movePlayer(int id, int n){
-        this.movePlayer(id, n, true);
+        this.movePlayer(id, n, this.PRINT);
     }
     public void movePlayer(int id, int n, boolean print){
         for(int i = 0; i<n;i++){
@@ -197,6 +209,9 @@ public class Map {
     }
     //Move the player backwards (full turn, move one, full turn)
     public void movePlayerBack(int id){
+        this.movePlayerBack(id, this.PRINT);
+    }
+    public void movePlayerBack(int id, boolean print){
         int prevX = this.players[id].getHeigth();
         int prevY = this.players[id].getWidth();
         this.turnLeftPlayer(id,false);
@@ -209,19 +224,19 @@ public class Map {
         if(prevX==currX && prevY==currY && currX==SPAWN[0] && currY==SPAWN[1]){
             this.players[id].setPointing(0);
         }
-        print(this);
+        if(print){print(this);}
     }
 
     //Turn the player to the Right and Left or make a full turn (if print == true it prints else, it doesn't) print is true by default
     public void turnRightPlayer(int id){
-        this.turnRightPlayer(id,true);
+        this.turnRightPlayer(id,this.PRINT);
     }
     public void turnRightPlayer(int id, boolean  print){
         this.players[id].turnRight();
         if(print){print(this);}
     }
     public void turnLeftPlayer(int id){
-        this.turnLeftPlayer(id,true);
+        this.turnLeftPlayer(id,this.PRINT);
     }
     public void turnLeftPlayer(int id, boolean  print){
         this.players[id].turnLeft();
@@ -251,7 +266,7 @@ public class Map {
     }
 
     public static void main(String[] args){
-        Map map = new Map(5,8);
+        Map map = new Map(5,8, true);
         map.addPlayer(2,0);
         map.addPlayer(1,0);
         map.addPlayer();
