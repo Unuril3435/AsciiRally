@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 public class Map {
     public static final String[] pointString = {">", "V", "<", "^"};
 
-    private final int[] SPAWN = {0,0};
+    private final int[] SPAWN = {3,2};
     private final String[] COLORS = {"\u001B[31m", "\u001B[34m", "\u001B[33m", "\u001B[35m", "\u001B[36m", "\u001B[37m", "\u001B[0m"};
     private final int heigth;
     private final int width;
@@ -127,6 +127,9 @@ public class Map {
                 } else{
                     if(isPlayer(i, j)>=0){
                         ans += COLORS[this.isPlayer(i, j)%(COLORS.length-1)];
+                        if(isFlag(i, j)>=0||(i==this.SPAWN[0]&&this.SPAWN[1]==j)){
+                            ans+="\u001B[42m";
+                        }
                         ans += pointString[this.players[isPlayer(i, j)].getPointing()];
                         ans += COLORS[6];
                     } else if (isFlag(i, j)>=0){
@@ -261,6 +264,7 @@ public class Map {
         map.fullTurnPlayer(0);
         map.movePlayerBack(0);
         map.fullTurnPlayer(0);
+        map.movePlayer(2, 1);
     }
 
 
