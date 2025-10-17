@@ -263,7 +263,7 @@ public class Map {
     public void print(){
 	    clear();
         System.out.println(this.toString());
-        wait(300);
+        wait(500);
     }
 
     public static void main(String[] args){
