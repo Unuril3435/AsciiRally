@@ -10,6 +10,7 @@ public class Player {
                           //1 => Down
                           //2 => Left
                           //3 => Up
+    private int flag;
     private String[] deck;
     private String[] hand;
     private String[] discard;
@@ -21,6 +22,9 @@ public class Player {
     public int getPointing(){return this.pointing;}
     public void setPointing(int n){this.pointing = n;}
     public String[] getHand(){return this.hand;}
+    public int getFlag(){return this.flag;}
+    public void setFlag(int f){this.flag = f;}
+    public void flagPlus(){this.flag++;}
 
     public Player(int h, int w){
         this.heigth = h;
@@ -64,6 +68,20 @@ public class Player {
 
         this.discard = newDiscard;
         this.hand = new String[0];
+    }
+    public boolean isInHand(String s){
+        for(int i = 0; i<this.hand.length; i++){
+            if(this.hand[i].equals(s)){
+                String[] newHand = new String[this.hand.length-1];
+                for(int skip = 0, j = 0; j<newHand.length; j++){
+                    if(this.hand[i].equals(s)){skip=1;}
+                    newHand[i] = this.hand[i+skip];
+                    this.hand = newHand;
+                }
+                return true;
+            }
+        }
+        return false;
     }
     public void addSpam(){
         String[] newDiscard = new String[this.discard.length+1];

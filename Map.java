@@ -196,6 +196,8 @@ public class Map {
             this.players[id].move();
             //If it falls
             if(isHole(this.players[id].getHeigth(),this.players[id].getWidth())){
+                this.players[id].addSpam();
+                this.players[id].addSpam();
                 int inSpawnPlayer = isPlayer(SPAWN[0], SPAWN[1]);
                 this.players[id].setHeigth(SPAWN[0]);
                 this.players[id].setWidth(SPAWN[1]);
@@ -272,10 +274,25 @@ public class Map {
             case "fullTurn":
                 this.fullTurnPlayer(id);
                 break;
+            case "spam":
+                this.spam(id);
+                break;
             default:
-                System.out.println("Couldn't understad " + this.players[id].getHand()[this.players[id].getHand().length]);
+                System.out.println("Couldn't understad " + this.players[id].getHand()[this.players[id].getHand().length-1]);
         }
         this.players[id].discardHand();
+        this.players[id].removeSpam();
+    }
+
+    //Draw a full hand of 9 cards
+    public void drawHand(int id){
+        for(int i = 0; i<9; i++){this.players[id].drawCard();}
+    }
+    //Increment flag if it is the correct one
+    public void checkFlag(){
+        for(int i = 0; i<this.players.length; i++){
+            if(isFlag(this.players[i].getHeigth(), this.players[i].getWidth())==this.players[i].getFlag()){this.players[i].flagPlus();}
+        }
     }
 
     //Various methods to create the illusion of movement
@@ -301,20 +318,26 @@ public class Map {
         map.addPlayer(2,0);
         map.addPlayer(1,0);
         map.addPlayer();
+        map.addPlayer();
         map.addHole(1, 2);
         map.addHole(1, 3);
         map.addFlag(4,5);
         map.addFlag(3,4);
         map.print();
-        map.movePlayer(2, 2);
-        map.movePlayer(1, 3);
-        map.fullTurnPlayer(0);
-        map.movePlayerBack(0);
-        map.fullTurnPlayer(0);
-        map.movePlayer(2, 5);
-        for(int i = 0; i<100; i++){
-            map.spam(0);
-        }
+        map.movePlayer(0, 4);
+        map.turnRightPlayer(0);
+        map.movePlayer(0, 1);
+        map.checkFlag();
+        map.movePlayer(0, 1);
+        map.turnLeftPlayer(0);
+        map.movePlayer(0, 1);
+        map.checkFlag();
+        map.turnLeftPlayer(0);
+        map.movePlayer(0,1);
+        map.turnLeftPlayer(0);
+        map.movePlayer(0,1);
+        map.checkFlag();
+        map.print();
     }
 
 
