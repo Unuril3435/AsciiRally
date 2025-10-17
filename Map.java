@@ -3,10 +3,10 @@ import java.util.concurrent.TimeUnit;
 //There is a bug, if 2 or more players have to respawn they all end up at the spawnpoint without pushing each other
 public class Map {
     public static final String[] pointString = {">", "V", "<", "^"};
+    public final String[] COLORS = {"\u001B[31m", "\u001B[34m", "\u001B[33m", "\u001B[35m", "\u001B[36m", "\u001B[37m", "\u001B[0m"};
 
     private final boolean PRINT;
     private final int[] SPAWN = {3,2};
-    private final String[] COLORS = {"\u001B[31m", "\u001B[34m", "\u001B[33m", "\u001B[35m", "\u001B[36m", "\u001B[37m", "\u001B[0m"};
     private final int heigth;
     private final int width;
     private int[][] holes;
