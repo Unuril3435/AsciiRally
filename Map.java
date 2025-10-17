@@ -288,6 +288,8 @@ public class Map {
     public void drawHand(int id){
         for(int i = 0; i<9; i++){this.players[id].drawCard();}
     }
+    //Return the hand of said player
+    public String[] getHand(int id){return this.players[id].getHand();}
     //Increment flag if it is the correct one
     public void checkFlag(){
         for(int i = 0; i<this.players.length; i++){
@@ -318,26 +320,13 @@ public class Map {
         map.addPlayer(2,0);
         map.addPlayer(1,0);
         map.addPlayer();
-        map.addPlayer();
         map.addHole(1, 2);
         map.addHole(1, 3);
         map.addFlag(4,5);
         map.addFlag(3,4);
         map.print();
-        map.movePlayer(0, 4);
-        map.turnRightPlayer(0);
-        map.movePlayer(0, 1);
-        map.checkFlag();
-        map.movePlayer(0, 1);
-        map.turnLeftPlayer(0);
-        map.movePlayer(0, 1);
-        map.checkFlag();
-        map.turnLeftPlayer(0);
-        map.movePlayer(0,1);
-        map.turnLeftPlayer(0);
-        map.movePlayer(0,1);
-        map.checkFlag();
-        map.print();
+        map.drawHand(0);
+        for(int i = 0; i<map.players[0].getHand().length; i++){System.out.print(map.players[0].getHand()[i] + " ");}
     }
 
 
