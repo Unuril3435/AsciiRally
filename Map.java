@@ -51,8 +51,8 @@ public class Map {
     public boolean isHole(int x, int y){
         for(int i = 0; i<this.holes.length; i++){
             if(this.holes[i][0]==x&&this.holes[i][1]==y ||
-               this.players[i].getHeigth()<0 || this.players[i].getHeigth()>=this.heigth ||
-               this.players[i].getWidth()<0 || this.players[i].getWidth()>=this.width){
+              ( x<0 || x>=this.heigth ||
+               y<0 || y>=this.width) ){
                 return true;
             }
         }
@@ -138,10 +138,11 @@ public class Map {
                     ans += " ";
                 } else{
                     if(isPlayer(i, j)>=0){
-                        ans += COLORS[this.isPlayer(i, j)%(COLORS.length-1)];
                         if(isFlag(i, j)>=0||(i==this.SPAWN[0]&&this.SPAWN[1]==j)){
                             ans+="\u001B[42m";
                         }
+                        ans += COLORS[this.isPlayer(i, j)%(COLORS.length-1)];
+                        
                         ans += pointString[this.players[isPlayer(i, j)].getPointing()];
                         ans += COLORS[6];
                     } else if (isFlag(i, j)>=0){
@@ -196,12 +197,12 @@ public class Map {
             //If it falls
             if(isHole(this.players[id].getHeigth(),this.players[id].getWidth())){
                 int inSpawnPlayer = isPlayer(SPAWN[0], SPAWN[1]);
-                if(inSpawnPlayer>=0){
-                    this.movePlayer(inSpawnPlayer, 1);
-                }
                 this.players[id].setHeigth(SPAWN[0]);
                 this.players[id].setWidth(SPAWN[1]);
                 this.players[id].setPointing(0);
+                if(inSpawnPlayer>=0){
+                    this.movePlayer(inSpawnPlayer, 1);
+                }
                 break;
             }
         if(print){this.print();}
@@ -262,7 +263,7 @@ public class Map {
     public void print(){
 	    clear();
         System.out.println(this.toString());
-        wait(500);
+        wait(300);
     }
 
     public static void main(String[] args){
@@ -276,10 +277,11 @@ public class Map {
         map.addFlag(3,4);
         map.print();
         map.movePlayer(2, 2);
+        map.movePlayer(1, 3);
         map.fullTurnPlayer(0);
         map.movePlayerBack(0);
         map.fullTurnPlayer(0);
-        map.movePlayer(2, 1);
+        map.movePlayer(2, 5);
     }
 
 
