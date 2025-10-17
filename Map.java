@@ -204,7 +204,7 @@ public class Map {
                 this.players[id].setPointing(0);
                 break;
             }
-        if(print){print(this);}
+        if(print){this.print();}
         }
     }
     //Move the player backwards (full turn, move one, full turn)
@@ -224,7 +224,7 @@ public class Map {
         if(prevX==currX && prevY==currY && currX==SPAWN[0] && currY==SPAWN[1]){
             this.players[id].setPointing(0);
         }
-        if(print){print(this);}
+        if(print){this.print();}
     }
 
     //Turn the player to the Right and Left or make a full turn (if print == true it prints else, it doesn't) print is true by default
@@ -233,14 +233,14 @@ public class Map {
     }
     public void turnRightPlayer(int id, boolean  print){
         this.players[id].turnRight();
-        if(print){print(this);}
+        if(print){this.print();}
     }
     public void turnLeftPlayer(int id){
         this.turnLeftPlayer(id,this.PRINT);
     }
     public void turnLeftPlayer(int id, boolean  print){
         this.players[id].turnLeft();
-        if(print){print(this);}
+        if(print){this.print();}
     }
     public void fullTurnPlayer(int id){
         this.turnRightPlayer(id);
@@ -259,9 +259,9 @@ public class Map {
             TimeUnit.MILLISECONDS.sleep(ms);
         } catch (Exception e){}
     }
-    public static void print(Map map){
+    public void print(){
 	    clear();
-        System.out.println(map.toString());
+        System.out.println(this.toString());
         wait(500);
     }
 
@@ -274,7 +274,7 @@ public class Map {
         map.addHole(1, 3);
         map.addFlag(4,5);
         map.addFlag(3,4);
-        print(map);
+        map.print();
         map.movePlayer(2, 2);
         map.fullTurnPlayer(0);
         map.movePlayerBack(0);
