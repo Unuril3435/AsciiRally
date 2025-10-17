@@ -3,7 +3,7 @@ public class Player {
     public static final String[] INITIALHAND = {"move1", "move1", "move1", "move1", "move1",
                                                 "move2", "move2", "move2", "move3", "recede",
                                                 "turnRight", "turnRight", "turnRight", "turnLeft", "turnLeft", "turnLeft",
-                                                "fullTurn", "repeat", "repeat"};
+                                                "fullTurn"/*, "repeat", "repeat"*/};
     private int heigth;
     private int width;
     private int pointing; //0 => Right
@@ -63,6 +63,14 @@ public class Player {
 
         this.discard = newDiscard;
         this.hand = new String[0];
+    }
+    public void addSpam(){
+	String[] newDiscard = new String[this.discard.lenght+1];
+	for(int i = 0; i<this.discard.lenght; i++){
+		newDiscard[i] = this.discard[i];
+	}
+	newDiscard[this.discard.lenght] = "spam";
+	this.discard = newDiscard;
     }
 
     public void move(){
