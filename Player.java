@@ -21,13 +21,14 @@ public class Player {
     public int getPointing(){return this.pointing;}
     public void setPointing(int n){this.pointing = n;}
     public String[] getHand(){return this.hand;}
-    
 
     public Player(int h, int w){
         this.heigth = h;
         this.width = w;
         this.pointing = 0;
         this.deck = INITIALHAND;
+        this.hand = new String[0];
+        this.discard = new String[0];
     }
 
     public void drawCard(){
@@ -50,9 +51,9 @@ public class Player {
         this.deck = newDeck;
     }
     public void shuffle(){
-        this.discard = this.deck;
+        this.deck = this.discard;
     }
-    public void discard(){
+    public void discardHand(){
         String[] newDiscard = new String[this.discard.length+this.hand.length];
         for(int i = 0; i<this.discard.length; i++){
             newDiscard[i] = this.discard[i];
@@ -65,12 +66,20 @@ public class Player {
         this.hand = new String[0];
     }
     public void addSpam(){
-	String[] newDiscard = new String[this.discard.lenght+1];
-	for(int i = 0; i<this.discard.lenght; i++){
-		newDiscard[i] = this.discard[i];
-	}
-	newDiscard[this.discard.lenght] = "spam";
-	this.discard = newDiscard;
+        String[] newDiscard = new String[this.discard.length+1];
+        for(int i = 0; i<this.discard.length; i++){
+            newDiscard[i] = this.discard[i];
+        }
+        newDiscard[this.discard.length] = "spam";
+        this.discard = newDiscard;
+    }
+    public void removeSpam(){
+        String[] newDiscard = new String[this.discard.length-1];
+        for(int i = 0, skip = 0; i<newDiscard.length; i++){
+            if(skip==0&&this.discard[i].equals("spam")){skip++;}
+            newDiscard[i] = this.discard[i+skip];
+        }
+        this.discard = newDiscard;
     }
 
     public void move(){

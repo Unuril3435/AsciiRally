@@ -248,6 +248,36 @@ public class Map {
         this.turnRightPlayer(id);
     }
 
+    public void spam(int id){
+        this.players[id].drawCard();
+        switch (this.players[id].getHand()[this.players[id].getHand().length-1]) {
+            case "move1":
+                this.movePlayer(id, 1);
+                break;
+            case "move2":
+                this.movePlayer(id, 2);
+                break;
+            case "move3":
+                this.movePlayer(id, 3);
+                break;
+            case "recede":
+                this.movePlayerBack(id);
+                break;
+            case "turnRight":
+                this.turnRightPlayer(id);
+                break;
+            case "turnLeft":
+                this.turnLeftPlayer(id);
+                break;
+            case "fullTurn":
+                this.fullTurnPlayer(id);
+                break;
+            default:
+                System.out.println("Couldn't understad " + this.players[id].getHand()[this.players[id].getHand().length]);
+        }
+        this.players[id].discardHand();
+    }
+
     //Various methods to create the illusion of movement
     //  - clear()  => clears screen
     //  - wait(ms) => wait x ms
@@ -282,6 +312,9 @@ public class Map {
         map.movePlayerBack(0);
         map.fullTurnPlayer(0);
         map.movePlayer(2, 5);
+        for(int i = 0; i<100; i++){
+            map.spam(0);
+        }
     }
 
 
