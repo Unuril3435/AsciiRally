@@ -6,7 +6,7 @@ public class Map {
     public final String[] COLORS = {"\u001B[31m", "\u001B[34m", "\u001B[33m", "\u001B[35m", "\u001B[36m", "\u001B[37m", "\u001B[0m"};
 
     private final boolean PRINT;
-    private final int[] SPAWN = {3,2};
+    private final int[] SPAWN = {1,3};
     private final int heigth;
     private final int width;
     private int[][] holes;
@@ -33,6 +33,7 @@ public class Map {
 
     public int getHeigth(){return this.heigth;}
     public int getWidth(){return this.width;}
+    public int getLastPlayer(){return this.players.length-1;}
 
     //Adds a hole at the given coordinates
     public void addHole(int x, int y) throws ArrayIndexOutOfBoundsException{
@@ -321,7 +322,7 @@ public class Map {
         map.addPlayer(1,0);
         map.addPlayer();
         map.addHole(1, 2);
-        map.addHole(1, 3);
+        map.addHole(1, 4);
         map.addFlag(4,5);
         map.addFlag(3,4);
         map.print();
