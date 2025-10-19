@@ -10,6 +10,11 @@ public class ServerMap {
     private Scanner[] in;
 
     public int getLastPlayer(){return this.map.getLastPlayer();}
+    public void drawHand(){
+        for(int i = 0; i<this.cs.length; i++){
+            this.map.drawHand(i);
+        }
+    }
     
     public ServerMap(){
         this.cs = new Socket[1];
@@ -40,6 +45,14 @@ public class ServerMap {
         } else {
             this.addPlayer();
         }
+    }
+    public String print(int id){
+        String ans = Map.COLORS[id%(Map.COLORS.length-1)] + "PLAYER " + id + Map.COLORS[Map.COLORS.length-1];
+        ans += "\n\n" + this.map.toString() + "HAND:\n";
+        String[] hand = this.map.getHand(id);
+        for(int i = 0; i<hand.length; i++){ans += hand[i] + " ";}
+        ans +="\n";
+        return ans;
     }
 
     public void searchPlayer() throws Exception{
@@ -74,11 +87,12 @@ public class ServerMap {
     public void send(String s, int id){
         this.out[id].print(s);
         this.out[id].flush();
+        //this.close();
     }
-    public void close() throws Exception{
-        this.ss.close();
+    public void close(){
+        //try{ this.ss.close();}catch (Exception e){}
         for(int i = 1; i<this.cs.length;i++){
-            this.cs[i].close();
+            try{ this.cs[i].close();}catch (Exception e){}
         }
     }
 
@@ -90,11 +104,15 @@ public class ServerMap {
         sm.ss = new ServerSocket(1729);
         sm.addPlayer();
         System.out.println("You are " + Map.COLORS[0] + "player 0" + Map.COLORS[Map.COLORS.length-1]);
-        System.out.println("How many players do you want to host?");
+        System.out.print("How many players do you want to host?: ");
         for(int n = kbd.nextInt();n>0;n--){
             sm.searchPlayer();
         }
-
-        sm.close();
+        sm.drawHand();
+        System.out.println(sm.print(0));
+        for(int i = 1; i<sm.cs.length; i++){
+            sm.out[i].print(sm.print(i));
+            sm.out[i].flush();
+        }
     }
 }
