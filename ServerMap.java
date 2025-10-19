@@ -89,12 +89,11 @@ public class ServerMap {
         Scanner kbd = new Scanner(System.in);
         sm.ss = new ServerSocket(1729);
         sm.addPlayer();
-        System.out.println("You are player 0");
+        System.out.println("You are " + Map.COLORS[0] + "player 0" + Map.COLORS[Map.COLORS.length-1]);
         System.out.println("How many players do you want to host?");
         for(int n = kbd.nextInt();n>0;n--){
             sm.searchPlayer();
         }
-        System.out.println(sm.cs.length);
 
         sm.close();
     }
