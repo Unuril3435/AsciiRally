@@ -5,15 +5,16 @@ import java .util.Scanner;
 public class ServerMap {
     private Map map;
     private ServerSocket ss;
-    private Socket cs;
-    private PrintWriter out;
-    private Scanner in;
-    private String clientPlayer;
+    private Socket[] cs;
+    private PrintWriter[] out;
+    private Scanner[] in;
 
     public int getLastPlayer(){return this.map.getLastPlayer();}
-    public String getClientPlayer(){return this.clientPlayer;}
-
+    
     public ServerMap(){
+        this.cs = new Socket[1];
+        this.out = new PrintWriter[1];
+        this.in = new Scanner[1];
         try{
             this.ss = new ServerSocket(3435);
         } catch (Exception e){System.out.println("Couldn't create the server.");}
@@ -41,35 +42,59 @@ public class ServerMap {
         }
     }
 
-    public void accept() throws Exception{
-        this.cs = this.ss.accept();
-        this.clientPlayer = cs.getInetAddress().toString();
-        this.out = new PrintWriter(cs.getOutputStream());
-        this.in = new Scanner(cs.getInputStream());
+    public void searchPlayer() throws Exception{
+        System.out.println("Waiting for player " + (this.cs.length) +"...");
+        Socket temp = ss.accept();
+        Socket[] newClient = new Socket[this.cs.length+1];
+        for(int i = 0; i<this.cs.length;i++){
+            newClient[i] = this.cs[i];
+        }
+        int newID = this.cs.length;
+        newClient[newID] = temp;
+        this.cs = newClient;
+        this.addPlayer();
+        
+        PrintWriter[] newOut = new PrintWriter[this.out.length+1];
+        for(int i = 0; i<this.out.length;i++){
+            newOut[i] = this.out[i];
+        }
+        newOut[newID] = new PrintWriter(this.cs[newID].getOutputStream());
+        this.out = newOut;
+        Scanner[] newIn = new Scanner[this.in.length+1];
+        for(int i = 0; i<this.in.length;i++){
+            newIn[i] = this.in[i];
+        }
+        newIn[newID] = new Scanner(this.cs[newID].getInputStream());
+        this.in = newIn;
+
+        this.send(String.valueOf(newID),newID);
+
+
     }
-    //Sending protocol (everything divided by \n)
-    // - player id
-    // - map in a string
-    public void send(String s){
-        this.out.print(s);
-        this.out.flush();
+    public void send(String s, int id){
+        this.out[id].print(s);
+        this.out[id].flush();
     }
     public void close() throws Exception{
         this.ss.close();
-        this.cs.close();
+        for(int i = 1; i<this.cs.length;i++){
+            this.cs[i].close();
+        }
     }
 
     public static void main(String[] args) throws Exception{
         Socket google = new Socket("8.8.8.8", 53);
         System.out.println("Server launched (ip = " + google.getLocalAddress().toString().substring(1) + ")");
         ServerMap sm = new ServerMap();
+        Scanner kbd = new Scanner(System.in);
         sm.ss = new ServerSocket(1729);
         sm.addPlayer();
-        System.out.println("You are Player " + sm.getLastPlayer());
-        System.out.println("Waiting for Players...");
-        sm.accept();
-        sm.addPlayer();
-        sm.send(String.valueOf(sm.getLastPlayer()));
+        System.out.println("You are player 0");
+        System.out.println("How many players do you want to host?");
+        for(int n = kbd.nextInt();n>0;n--){
+            sm.searchPlayer();
+        }
+        System.out.println(sm.cs.length);
 
         sm.close();
     }

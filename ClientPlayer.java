@@ -10,6 +10,6 @@ public class ClientPlayer {
         PrintWriter out = new PrintWriter(s.getOutputStream());
         Scanner in = new Scanner(s.getInputStream());
         int playerID = Integer.parseInt(in.nextLine());
-        System.out.println(playerID);
+        System.out.println("I am player " + playerID);
     }
 }
