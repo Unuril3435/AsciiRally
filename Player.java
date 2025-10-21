@@ -30,6 +30,7 @@ public class Player {
         this.heigth = h;
         this.width = w;
         this.pointing = 0;
+        this.flag = 0;
         this.deck = INITIALHAND;
         this.hand = new String[0];
         this.discard = new String[0];
@@ -56,6 +57,7 @@ public class Player {
     }
     public void shuffle(){
         this.deck = this.discard;
+        this.discard = new String[0];
     }
     public void discardHand(){
         String[] newDiscard = new String[this.discard.length+this.hand.length];

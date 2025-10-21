@@ -33,7 +33,9 @@ public class Map {
 
     public int getHeigth(){return this.heigth;}
     public int getWidth(){return this.width;}
-    public int getLastPlayer(){return this.players.length-1;}
+    public int getFlag(int id){return this.players[id].getFlag();}
+    //The first player is the player 0 (host)
+    public int getPlayers(){return this.players.length-1;}
 
     //Adds a hole at the given coordinates
     public void addHole(int x, int y) throws ArrayIndexOutOfBoundsException{

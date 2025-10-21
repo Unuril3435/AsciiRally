@@ -1,17 +1,22 @@
 import java.io.PrintWriter;
 import java.net.*;
-import java .util.Scanner;
+import java.util.Scanner;
 
 public class ClientPlayer {
-    public int playerID;
+    public int id;
     public static void main(String[] args) throws Exception{
-        Socket s = new Socket("192.168.1.135", 1729);
-        PrintWriter out = new PrintWriter(s.getOutputStream());
+        String IP = "192.168.2.113";
+        Socket s = new Socket(IP, ServerMap.PORT);
         Scanner in = new Scanner(s.getInputStream());
-        int playerID = Integer.parseInt(in.nextLine());
-        System.out.println("I am " + Map.COLORS[playerID%(Map.COLORS.length-1)] + "player " + playerID + Map.COLORS[Map.COLORS.length-1]);
-        while(in.hasNext()){
-            System.out.println(in.nextLine());
-        }
+        int id = in.nextInt();
+        System.out.println("I am " + Map.COLORS[id%(Map.COLORS.length-1)] + "player " + id + Map.COLORS[Map.COLORS.length-1]);
+        
+        s = new Socket(IP, ServerMap.PORT);
+        PrintWriter out = new PrintWriter(s.getOutputStream());
+        in = new Scanner(s.getInputStream());
+        out.print(id);
+        out.flush();
+
+        //Recieve info from server
     }
 }

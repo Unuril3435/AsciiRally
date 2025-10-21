@@ -3,25 +3,23 @@ import java.net.*;
 import java .util.Scanner;
 
 public class ServerMap {
+    public static final int PORT = 1729;
+
     private Map map;
     private ServerSocket ss;
-    private Socket[] cs;
-    private PrintWriter[] out;
-    private Scanner[] in;
+    private Socket cs;
+    private PrintWriter out;
+    private Scanner in;
 
-    public int getLastPlayer(){return this.map.getLastPlayer();}
     public void drawHand(){
-        for(int i = 0; i<this.cs.length; i++){
+        for(int i = 0; i<this.map.getPlayers()+1; i++){
             this.map.drawHand(i);
         }
     }
     
     public ServerMap(){
-        this.cs = new Socket[1];
-        this.out = new PrintWriter[1];
-        this.in = new Scanner[1];
         try{
-            this.ss = new ServerSocket(3435);
+            this.ss = new ServerSocket(PORT);
         } catch (Exception e){System.out.println("Couldn't create the server.");}
         //Generate a map with different things
         this.map = new Map(7, 10);
@@ -48,7 +46,17 @@ public class ServerMap {
     }
     public String print(int id){
         String ans = Map.COLORS[id%(Map.COLORS.length-1)] + "PLAYER " + id + Map.COLORS[Map.COLORS.length-1];
-        ans += "\n\n" + this.map.toString() + "HAND:\n";
+        ans += ":\n" + this.map.toString();
+        ans += "FLAGS: ";
+        if(this.map.getFlag(id)==0){
+            ans += "none";
+        } else {
+            for(int i = 1; i<this.map.getFlag(id);i++){
+                ans += "-->\u001B[32m " + i + "\u001B[0m ";
+            }
+        }
+        
+        ans += "\nHAND: ";
         String[] hand = this.map.getHand(id);
         for(int i = 0; i<hand.length; i++){ans += hand[i] + " ";}
         ans +="\n";
@@ -56,44 +64,45 @@ public class ServerMap {
     }
 
     public void searchPlayer() throws Exception{
-        System.out.println("Waiting for player " + (this.cs.length) +"...");
-        Socket temp = ss.accept();
-        Socket[] newClient = new Socket[this.cs.length+1];
-        for(int i = 0; i<this.cs.length;i++){
-            newClient[i] = this.cs[i];
-        }
-        int newID = this.cs.length;
-        newClient[newID] = temp;
-        this.cs = newClient;
-        this.addPlayer();
+        System.out.println("Waiting for player " + (this.map.getPlayers()+1) +"...");
         
-        PrintWriter[] newOut = new PrintWriter[this.out.length+1];
-        for(int i = 0; i<this.out.length;i++){
-            newOut[i] = this.out[i];
-        }
-        newOut[newID] = new PrintWriter(this.cs[newID].getOutputStream());
-        this.out = newOut;
-        Scanner[] newIn = new Scanner[this.in.length+1];
-        for(int i = 0; i<this.in.length;i++){
-            newIn[i] = this.in[i];
-        }
-        newIn[newID] = new Scanner(this.cs[newID].getInputStream());
-        this.in = newIn;
+        this.cs = ss.accept();
+        this.addPlayer();
+        this.out = new PrintWriter(this.cs.getOutputStream());
+        this.out.print(this.map.getPlayers());
+        this.out.flush();
+        this.cs.close();
+        
+    }
+    //Protocol:
+    // - Accept(client connects)
+    // - Client sends it's id
+    // - Server checks if client's id == id
+    // - if (client's id == id){send s}
+    //   else {repeat}
+    public void send(String s, int id) throws Exception{
+        this.cs = ss.accept();
+        this.in = new Scanner(this.cs.getInputStream());
+        this.out = new PrintWriter(this.cs.getOutputStream());
+        System.out.println("Hello World");
+        String playerId = this.in.nextLine();
+        System.out.println(playerId);
+        
+        this.out.print(s);
+        this.out.flush();
 
-        this.send(String.valueOf(newID),newID);
+        /*if(playerId == id){
+            
+        } else {
+            this.send(s,id);
+        }*/
 
+        this.close();
 
     }
-    public void send(String s, int id){
-        this.out[id].print(s);
-        this.out[id].flush();
-        //this.close();
-    }
-    public void close(){
-        //try{ this.ss.close();}catch (Exception e){}
-        for(int i = 1; i<this.cs.length;i++){
-            try{ this.cs[i].close();}catch (Exception e){}
-        }
+    public void close() throws Exception{
+        //this.ss.close();
+        this.cs.close();
     }
 
     public static void main(String[] args) throws Exception{
@@ -101,7 +110,6 @@ public class ServerMap {
         System.out.println("Server launched (ip = " + google.getLocalAddress().toString().substring(1) + ")");
         ServerMap sm = new ServerMap();
         Scanner kbd = new Scanner(System.in);
-        sm.ss = new ServerSocket(1729);
         sm.addPlayer();
         System.out.println("You are " + Map.COLORS[0] + "player 0" + Map.COLORS[Map.COLORS.length-1]);
         System.out.print("How many players do you want to host?: ");
@@ -110,9 +118,12 @@ public class ServerMap {
         }
         sm.drawHand();
         System.out.println(sm.print(0));
-        for(int i = 1; i<sm.cs.length; i++){
-            sm.out[i].print(sm.print(i));
-            sm.out[i].flush();
-        }
+
+        sm.send(sm.print(1), 1);
+        /*for(int i = 1; i<sm.map.getPlayers()+1; i++){
+            sm.out.print(sm.print(i));
+            sm.out.flush();
+            sm.close();
+        }*/
     }
 }
