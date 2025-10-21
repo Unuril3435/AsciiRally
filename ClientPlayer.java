@@ -3,20 +3,46 @@ import java.net.*;
 import java.util.Scanner;
 
 public class ClientPlayer {
-    public int id;
-    public static void main(String[] args) throws Exception{
-        String IP = "192.168.2.113";
-        Socket s = new Socket(IP, ServerMap.PORT);
-        Scanner in = new Scanner(s.getInputStream());
-        int id = in.nextInt();
-        System.out.println("I am " + Map.COLORS[id%(Map.COLORS.length-1)] + "player " + id + Map.COLORS[Map.COLORS.length-1]);
-        
-        s = new Socket(IP, ServerMap.PORT);
-        PrintWriter out = new PrintWriter(s.getOutputStream());
-        in = new Scanner(s.getInputStream());
-        out.print(id);
-        out.flush();
 
-        //Recieve info from server
+    public static String IP;
+    private static int id;
+    private ServerSocket ss;
+    private Socket s;
+    private PrintWriter out;
+    private Scanner in;
+
+    public ClientPlayer(String ip) throws Exception{
+        this.IP = ip;
+        this.s = new Socket(this.IP, ServerMap.PORT);
+        System.out.println("Connection successfull");
+        this.in = new Scanner(s.getInputStream());
+        this.id = in.nextInt();
+    }
+
+    public String ask() throws Exception{
+        try{
+            String ans = "";
+
+            this.ss = new ServerSocket(ServerMap.PORT);
+            this.s = ss.accept();
+            this.in = new Scanner(s.getInputStream());
+            while(in.hasNext()){
+                ans += in.nextLine();
+            }
+            ss.close();
+            s.close();
+
+            return ans;
+        } catch (BindException e){
+            Map.wait(100);
+            return this.ask();
+        }
+    }
+    public static void main(String[] args) throws Exception{
+        
+        ClientPlayer cp = new ClientPlayer("10.236.56.87");
+        
+        System.out.println(cp.ask());
+        
     }
 }
