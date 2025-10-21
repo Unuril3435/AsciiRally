@@ -100,6 +100,13 @@ public class ServerMap {
         this.close();
 
     }
+    public void ask(int id) throws Exception{
+        this.ss = new ServerSocket(PORT);
+        this.ss.bind(null);
+        this.cs = ss.accept();
+        this.in = new Scanner(this.cs.getInputStream());
+        System.out.println(this.in.nextLine());
+    }
     public void close() throws Exception{
         this.ss.close();
         this.cs.close();
@@ -119,3 +126,4 @@ public class ServerMap {
         sm.send(sm.print(1), 1);
     }
 }
+

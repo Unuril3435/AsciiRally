@@ -18,8 +18,8 @@ public class ClientPlayer {
         this.in = new Scanner(s.getInputStream());
         this.id = in.nextInt();
     }
-
-    public String ask() throws Exception{
+    public String ask() throws Exception{return this.ask(true);}
+    public String ask(boolean print) throws Exception{
         try{
             String ans = "";
 
@@ -27,16 +27,26 @@ public class ClientPlayer {
             this.s = ss.accept();
             this.in = new Scanner(s.getInputStream());
             while(in.hasNext()){
-                ans += in.nextLine();
-            }
+                ans += in.nextLine() + "\n";
+            }   
             ss.close();
             s.close();
 
             return ans;
         } catch (BindException e){
             Map.wait(100);
-            return this.ask();
+            if(print){System.out.println("Waiting for other players...");}
+            return this.ask(false);
         }
+    }
+
+    public void send(String s) throws Exception{
+
+        this.s = new Socket(this.IP, ServerMap.PORT);
+        this.out = new PrintWriter(this.s.getOutputStream());
+        this.out.print(s);
+        this.out.flush();
+        this.s.close();
     }
     public static void main(String[] args) throws Exception{
         
