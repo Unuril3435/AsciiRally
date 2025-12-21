@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 public class Map {
     public static final String[] pointString = {">", "V", "<", "^"};
     public static final String[] COLORS = {"\u001B[31m", "\u001B[34m", "\u001B[33m", "\u001B[35m", "\u001B[36m", "\u001B[37m", "\u001B[0m"};
+    public static final int handSize = 9;
 
     private final boolean PRINT;
     private final int[] SPAWN = {1,3};
@@ -12,6 +13,7 @@ public class Map {
     private int[][] holes;
     private int[][] flags;
     private Player[] players;
+
 
     public Map(int h, int w){
         this.heigth = h;
@@ -87,7 +89,7 @@ public class Map {
 
     //Checks if the coordinates are not a hole, flag or the spawnpoint
     public boolean isFree(int x, int y){
-        return!(isHole(x, y)||isFlag(x, y)>=0||(x==SPAWN[0]&&y==SPAWN[1]));
+        return!(isPlayer(x,y)!=-1||isHole(x, y)||isFlag(x, y)>=0||(x==SPAWN[0]&&y==SPAWN[1]));
     }
 
     //Creates a player with an id at the spawnpoint
@@ -253,6 +255,7 @@ public class Map {
         this.turnRightPlayer(id);
     }
 
+    //Execute spam (the next card in your deck)
     public void spam(int id){
         this.players[id].drawCard();
         switch (this.players[id].getHand()[this.players[id].getHand().length-1]) {
@@ -289,10 +292,32 @@ public class Map {
 
     //Draw a full hand of 9 cards
     public void drawHand(int id){
-        for(int i = 0; i<9; i++){this.players[id].drawCard();}
+	this.players[id].discardHand();
+        for(int i = 0; i<handSize; i++){this.players[id].drawCard();}
     }
     //Return the hand of said player
     public String[] getHand(int id){return this.players[id].getHand();}
+    //Check if it input is a valid program
+    public boolean isProgram(int id, String[] program){
+	    if(program.length!=5){
+		    return false;
+	    }
+	    String[] hand = this.players[id].getHand();
+	    for(int i = 0; i<program.length; i++){
+		    for(int j = 0; j<hand.length; j++){
+			    if(program[i].equals(hand[j])){
+				    hand[j] = null;
+				    break;
+			    }
+			    if(j==handSize-1){
+				    return false;
+			    }
+		    }
+	    }
+	    return true;
+    }
+
+
     //Increment flag if it is the correct one
     public void checkFlag(){
         for(int i = 0; i<this.players.length; i++){
@@ -329,6 +354,8 @@ public class Map {
         map.addFlag(3,4);
         map.print();
         map.drawHand(0);
+	map.movePlayer(0, 2);
+	map.turnLeftPlayer(0);
         for(int i = 0; i<map.players[0].getHand().length; i++){System.out.print(map.players[0].getHand()[i] + " ");}
     }
 

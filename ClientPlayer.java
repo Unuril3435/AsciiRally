@@ -50,7 +50,7 @@ public class ClientPlayer {
     }
     public static void main(String[] args) throws Exception{
         
-        ClientPlayer cp = new ClientPlayer("10.236.56.87");
+        ClientPlayer cp = new ClientPlayer("localhost");
         
         System.out.println(cp.ask());
         
