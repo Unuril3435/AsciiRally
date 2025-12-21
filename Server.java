@@ -112,11 +112,6 @@ class ServerMap{
 			System.out.println(b);
 		}
 		this.toExec = b;
-		if(this.toExec){
-			System.out.println("This is all");
-		}else{
-			System.out.println("Not everybody ready");
-		}
 		return true;
 	}
 	
