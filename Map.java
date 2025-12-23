@@ -1,4 +1,5 @@
 import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
 
 //There is a bug, if 2 or more players have to respawn they all end up at the spawnpoint without pushing each other
 public class Map {
@@ -297,12 +298,13 @@ public class Map {
     }
     //Return the hand of said player
     public String[] getHand(int id){return this.players[id].getHand();}
+
     //Check if it input is a valid program
     public boolean isProgram(int id, String[] program){
 	    if(program.length!=5){
 		    return false;
 	    }
-	    String[] hand = this.players[id].getHand();
+	    String[] hand = Arrays.copyOf(this.players[id].getHand(), handSize);
 	    for(int i = 0; i<program.length; i++){
 		    for(int j = 0; j<hand.length; j++){
 			    if(program[i].equals(hand[j])){
